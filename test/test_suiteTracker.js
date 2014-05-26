@@ -171,11 +171,15 @@ describe('SuiteTracker', function() {
                 tracker._currentSuiteSummary = sinon.stub().returns({
                     failingTests: mockArray
                 });
+                tracker._failingTests = {
+                    push: sinon.stub()
+                };
                 tracker.currentSuiteName = sinon.stub().returns('some_suite');
                 tracker.addFailingTest(test, err);
                 sinon.assert.calledOnce(tracker.currentSuiteName);
                 sinon.assert.calledWith(tracker.cleanFailingTest, test, err, 'some_suite');
                 sinon.assert.calledWith(mockArray.push, cleaned);
+                sinon.assert.calledWith(tracker._failingTests.push, cleaned);
             });
         });
 

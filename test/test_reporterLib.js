@@ -217,5 +217,26 @@ describe('Reporter', function() {
                 });
             });
         });
+        describe('#summarize', function() {
+            var stubs;
+            beforeEach(function() {
+                stubs = {};
+                stubs.initialize = sinon.stub(Reporter.prototype, 'initialize');
+            });
+            afterEach(function() {
+                stubs.initialize.restore();
+            });
+            it('works', function() {
+                var trackerSummary = {};
+                var tracker = {
+                    summarize: sinon.stub().returns(trackerSummary)
+                };
+                var reporter = new Reporter({});
+                reporter._tracker = tracker;
+                var summary = reporter.summarize();
+                sinon.assert.calledOnce(tracker.summarize);
+                assert.equal(trackerSummary, summary);
+            });
+        });
     });
 });
