@@ -186,10 +186,17 @@ SuiteTracker.prototype.cleanFailingTest = function(test, err, suiteName) {
     };
 };
 
+SuiteTracker.prototype._mostRecentTest = function() {
+    var tests = this._currentSuiteSummary().tests;
+    return tests[tests.length - 1];
+};
+
 SuiteTracker.prototype.addFailingTest = function(test, err) {
     var currentSuite = this.currentSuiteName();
     var cleaned = this.cleanFailingTest(test, err, currentSuite);
-    this._currentSuiteSummary().failingTests.push(cleaned);
+    var currentSummary = this._currentSuiteSummary();
+    currentSummary.failingTests.push(cleaned);
+    this._mostRecentTest().failing = true;
     this._failingTests.push(cleaned);
 };
 

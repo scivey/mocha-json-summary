@@ -99,7 +99,8 @@ runner.stdout.on('data', function(data) {
                         title: 'works'
                     },
                     {
-                        title: 'fails embarassingly'
+                        title: 'fails embarassingly',
+                        failing: true
                     }
                 ],
                 failingTests: [

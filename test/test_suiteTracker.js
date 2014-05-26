@@ -119,6 +119,20 @@ describe('SuiteTracker', function() {
             });
         });
 
+        describe('#_mostRecentTest', function() {
+            it('works', function() {
+                var mockTest = {};
+                var mockSuite = {
+                    tests: [
+                        {},
+                        mockTest
+                    ]
+                };
+                tracker._currentSuiteSummary = sinon.stub().returns(mockSuite);
+                assert.equal(tracker._mostRecentTest(), mockTest);
+            });
+        });
+
         describe('#addTest', function() {
             it('works', function() {
                 var cleaned = {};
@@ -162,6 +176,9 @@ describe('SuiteTracker', function() {
                 var mockArray = {
                     push: sinon.stub()
                 };
+                var mockLastTest = {
+                    title: 'foo'
+                };
                 tracker.cleanFailingTest = sinon.stub().returns(cleaned);
                 tracker._currentSuiteSummary = sinon.stub().returns({
                     failingTests: mockArray
@@ -169,12 +186,18 @@ describe('SuiteTracker', function() {
                 tracker._failingTests = {
                     push: sinon.stub()
                 };
+
+                tracker._mostRecentTest = sinon.stub().returns(mockLastTest);
                 tracker.currentSuiteName = sinon.stub().returns('some_suite');
                 tracker.addFailingTest(test, err);
                 sinon.assert.calledOnce(tracker.currentSuiteName);
                 sinon.assert.calledWith(tracker.cleanFailingTest, test, err, 'some_suite');
                 sinon.assert.calledWith(mockArray.push, cleaned);
                 sinon.assert.calledWith(tracker._failingTests.push, cleaned);
+                assert.deepEqual({
+                    title: 'foo',
+                    failing: true
+                }, mockLastTest);
             });
         });
 
@@ -222,6 +245,9 @@ describe('SuiteTracker', function() {
             tracker.addTest({
                 title: 'they_keep_coming'
             });
+            tracker.addTest({
+                title: 'some_failing_test'
+            });
             tracker.addFailingTest({
                 title: 'some_failing_test'
             }, 'ErrorInstance');
@@ -252,6 +278,10 @@ describe('SuiteTracker', function() {
                             {
                                 title: 'they_keep_coming'
                             },
+                            {
+                                title: 'some_failing_test',
+                                failing: true
+                            }
                         ],
                         failingTests: [
                             {
