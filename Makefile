@@ -10,4 +10,4 @@ lint:
 	grunt jshint
 
 build-client: test
-	browserify --no-bundle-external -e ./index.js -s JSONSummary -o build/reporter.js
+	browserify --no-bundle-external -e ./index.js -s JSONSummaryReporter -o build/reporter.js
