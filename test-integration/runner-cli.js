@@ -20,6 +20,7 @@ var deepEqual = require('deep-eql');
 var Mocha = require('mocha');
 
 var Reporter = require(inLib('reporterLib')).Reporter;
+Reporter.setMocha(Mocha);
 
 Reporter.prototype.onEnd = function() {
     var summary = this.summarize();

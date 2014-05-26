@@ -17,7 +17,7 @@ describe('Reporter', function() {
     describe('Unit', function() {
         var BaseClass;
         beforeEach(function() {
-            BaseClass = sinon.stub(reporterLib, 'Base');
+            BaseClass = sinon.stub(Reporter, '__super__');
         });
         afterEach(function() {
             BaseClass.restore();
@@ -236,6 +236,36 @@ describe('Reporter', function() {
                 var summary = reporter.summarize();
                 sinon.assert.calledOnce(tracker.summarize);
                 assert.equal(trackerSummary, summary);
+            });
+        });
+        describe('#setMocha', function() {
+            beforeEach(function() {
+                this.originalSuper = Reporter.__super__;
+            });
+            afterEach(function() {
+                Reporter.__super__ = this.originalSuper;
+            });
+            it('sets its __super__ class to mocha\'s Base reporter.', function() {
+                var base = sinon.stub();
+                var mockMocka = {
+                    reporters: {
+                        Base: base
+                    }
+                };
+                Reporter.setMocha(mockMocka);
+                assert.equal(Reporter.__super__, base);
+            });
+            it('checks the constructor if `mocha` is a Mocha instance.', function() {
+                var base = sinon.stub();
+                var mockMocka = {
+                    constructor: {
+                        reporters: {
+                            Base: base
+                        }         
+                    }
+                };
+                Reporter.setMocha(mockMocka);
+                assert.equal(Reporter.__super__, base);
             });
         });
     });

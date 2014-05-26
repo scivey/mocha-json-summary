@@ -47,6 +47,37 @@ var diff = difflet({
     comment: true
 });
 
+
+var isDateString = function(possibleDate) {
+    var dateReg = /^\d{4}-\d{2}-\d{2}(T.*)?$/;
+    return dateReg.test(possibleDate);
+};
+
+var truncateErrorStack = function(oneTest) {
+    if (oneTest && oneTest.err) {
+        oneTest.err.stack = '{{stack truncated}}';
+    }
+};
+
+var truncateSuiteErrors = function(aSuite) {
+    if (aSuite.failingTests.length > 0) {
+        _.each(aSuite.failingTests, truncateErrorStack);
+    }
+};
+
+var cleanStats = function(stats) {
+    if (stats.duration && _.isNumber(stats.duration)) {    
+        stats.duration = '{{number removed}}';
+    }
+    if (stats.start && isDateString(stats.end)) {
+        stats.start = '{{date removed}}';
+    }
+    if (stats.end && isDateString(stats.end)) {
+        stats.end = '{{date removed}}';
+    }
+    return stats;
+};
+
 runner.stdout.on('data', function(data) {
     data = JSON.parse(data);
     var expected = {
@@ -125,23 +156,23 @@ runner.stdout.on('data', function(data) {
                     stack: '{{stack truncated}}'
                 }
             }
-        ]
-    };
-
-    var truncateErrorStack = function(oneTest) {
-        if (oneTest && oneTest.err) {
-            oneTest.err.stack = '{{stack truncated}}';
+        ],
+        stats: {
+            suites: 7,
+            tests: 6,
+            passes: 5,
+            failures: 1,
+            pending: 0,
+            duration: '{{number removed}}',
+            start: '{{date removed}}',
+            end: '{{date removed}}'
         }
     };
 
-    _.each(data.suites, function(suite, suiteName) {
-        if (suite.failingTests.length > 0) {
-            _.each(suite.failingTests, truncateErrorStack);
-        }
-    });
-    if (data.failingTests.length > 0) {
-        _.each(data.failingTests, truncateErrorStack);
-    }
+    truncateSuiteErrors(data);
+    _.each(data.suites, truncateSuiteErrors);
+
+    cleanStats(data.stats);
 
     var eq = deepEqual(expected, data);
     if (!eq) {
