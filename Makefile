@@ -7,10 +7,7 @@ test: lint
 	node ./test-integration/run.js
 
 lint:
-	jshint ./lib
-	jshint ./test
-	jshint ./test-integration
-	jshint ./test-integration/sample_tests
+	grunt jshint
 
 copy-test: build-client
 	cp ./build/reporter.js ../mocha_fixtures/simple/js/test

@@ -1,5 +1,5 @@
+'use strict';
 var assert = require('chai').assert;
-var sinon = require('sinon');
 
 var strings = {
     contains: function(subString, toSearch) {

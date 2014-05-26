@@ -1,11 +1,6 @@
-var fs = require('fs');
+'use strict';
 var _ = require('underscore');
 var path = require('path');
-var assert = require('assert');
-
-var inLib = function(file) {
-    return path.join(__dirname, '../lib', file);
-};
 
 var inDir = function() {
     return path.join.apply(null, _.flatten([__dirname, arguments], true));
@@ -14,8 +9,6 @@ var inDir = function() {
 var inLib = function(file) {
     return inDir('../lib', file);
 };
-
-var deepEqual = require('deep-eql');
 
 var Mocha = require('mocha');
 

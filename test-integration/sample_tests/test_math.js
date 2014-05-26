@@ -1,5 +1,5 @@
+'use strict';
 var assert = require('chai').assert;
-var sinon = require('sinon');
 
 var math = {
     add: function(x, y) {

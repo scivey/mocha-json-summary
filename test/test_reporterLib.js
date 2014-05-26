@@ -1,13 +1,13 @@
+'use strict';
 var path = require('path');
 var _ = require('underscore');
 var sinon = require('sinon');
 var assert = require('chai').assert;
-var mocha = require('mocha');
 var EventEmitter = require('events').EventEmitter;
 
 var inLib = function() {
     var shallow = true;
-    return path.join.apply(null, _.flatten([__dirname, '../lib', arguments], true));
+    return path.join.apply(null, _.flatten([__dirname, '../lib', arguments], shallow));
 };
 
 var reporterLib = require(inLib('reporterLib'));
@@ -38,6 +38,7 @@ describe('Reporter', function() {
                     total: 10
                 };
                 var rep = new Reporter(runner);
+                assert.instanceOf(rep, Reporter);
                 sinon.assert.calledOnce(BaseClass);
                 sinon.assert.calledWith(stubs.initialize, runner);
             });
@@ -62,6 +63,7 @@ describe('Reporter', function() {
                     total: 10
                 };
                 var rep = new Reporter(runner);
+                assert.instanceOf(rep, Reporter);
                 sinon.assert.calledOnce(initSpy);
                 sinon.assert.calledWith(stubs.startListening, runner);
             });
@@ -87,6 +89,7 @@ describe('Reporter', function() {
             });
             it('works - set', function() {
                 var rep = new Reporter();
+                assert.instanceOf(rep, Reporter);
                 rep.setTracker('foo');
                 assert.equal(rep._tracker, 'foo');
             });
@@ -163,7 +166,6 @@ describe('Reporter', function() {
                 var test = {
                     title: 'some_test'
                 };
-                var err = {};
                 reporter.getTracker = sinon.stub().returns(tracker);
                 reporter._initListen(runner);
                 _.defer(function() {

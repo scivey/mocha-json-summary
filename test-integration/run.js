@@ -1,33 +1,12 @@
-var fs = require('fs');
+'use strict';
 var _ = require('underscore');
 var path = require('path');
 var assert = require('assert');
-var AssertionError = assert.AssertionError;
-
-var inspect = (function() {
-    var util = require('util');
-    var opts = {
-        colors: true,
-        depth: null
-    };
-    return function(ref) {
-        console.log(util.inspect(ref, opts));
-    };
-})();
-
-var inLib = function(file) {
-    return path.join(__dirname, '../lib', file);
-};
 
 var inDir = function() {
     return path.join.apply(null, _.flatten([__dirname, arguments], true));
 };
 
-var inLib = function(file) {
-    return inDir('../lib', file);
-};
-
-var spawn = require('child_process').spawn;
 var fork = require('child_process').fork;
 var difflet = require('difflet');
 var runner = fork(inDir('runner-cli.js'), [], {silent: true});

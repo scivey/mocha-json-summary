@@ -1,3 +1,4 @@
+'use strict';
 var path = require('path');
 var _ = require('underscore');
 var sinon = require('sinon');
@@ -5,7 +6,7 @@ var assert = require('chai').assert;
 
 var inLib = function() {
     var shallow = true;
-    return path.join.apply(null, _.flatten([__dirname, '../lib', arguments], true));
+    return path.join.apply(null, _.flatten([__dirname, '../lib', arguments], shallow));
 };
 
 var SuiteStack = require(inLib('suiteStack'));
