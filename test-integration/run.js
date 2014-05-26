@@ -50,66 +50,99 @@ var diff = difflet({
 runner.stdout.on('data', function(data) {
     data = JSON.parse(data);
     var expected = {
-        __math__add: {
-            tests: [
-                {
-                    title: 'works'
-                }
-            ],
-            failingTests: []
-        },
-        __math__sub: {
-            tests: [
-                {
-                    title: 'works'
-                }
-            ],
-            failingTests: []
-        },
-        __math__div: {
-            tests: [
-                {
-                    title: 'works'
-                }
-            ],
-            failingTests: []
-        },
-        __strings__contains: {
-            tests: [
-                {
-                    title: 'works'
-                }
-            ],
-            failingTests: []
-        },
-        __strings__without: {
-            tests: [
-                {
-                    title: 'works'
-                },
-                {
-                    title: 'fails embarassingly'
-                }
-            ],
-            failingTests: [
-                {
-                    test: {
-                        title: 'fails embarassingly'
-                    },
-                    suite: '__strings__without',
-                    err: {
-                        name: 'AssertionError',
-                        message: 'expected \'fish\' to equal \'capybaras\'',
-                        showDiff: false,
-                        actual: 'fish',
-                        expected: 'capybaras',
-                        stack: '{{stack truncated}}'
+        suites: {
+            __math__add: {
+                tests: [
+                    {
+                        title: 'works'
                     }
+                ],
+                failingTests: []
+            },
+            __math__sub: {
+                tests: [
+                    {
+                        title: 'works'
+                    }
+                ],
+                failingTests: []
+            },
+            __math__div: {
+                tests: [
+                    {
+                        title: 'works'
+                    }
+                ],
+                failingTests: []
+            },
+            __strings__contains: {
+                tests: [
+                    {
+                        title: 'works'
+                    }
+                ],
+                failingTests: []
+            },
+            __strings__without: {
+                tests: [
+                    {
+                        title: 'works'
+                    },
+                    {
+                        title: 'fails embarassingly'
+                    }
+                ],
+                failingTests: [
+                    {
+                        test: {
+                            title: 'fails embarassingly'
+                        },
+                        suite: '__strings__without',
+                        err: {
+                            name: 'AssertionError',
+                            message: 'expected \'fish\' to equal \'capybaras\'',
+                            showDiff: false,
+                            actual: 'fish',
+                            expected: 'capybaras',
+                            stack: '{{stack truncated}}'
+                        }
+                    }
+                ]
+            }
+        },
+        failingTests: [
+            {
+                test: {
+                    title: 'fails embarassingly'
+                },
+                suite: '__strings__without',
+                err: {
+                    name: 'AssertionError',
+                    message: 'expected \'fish\' to equal \'capybaras\'',
+                    showDiff: false,
+                    actual: 'fish',
+                    expected: 'capybaras',
+                    stack: '{{stack truncated}}'
                 }
-            ]
+            }
+        ]
+    };
+
+    var truncateErrorStack = function(oneTest) {
+        if (oneTest && oneTest.err) {
+            oneTest.err.stack = '{{stack truncated}}';
         }
     };
-    data.__strings__without.failingTests[0].err.stack = '{{stack truncated}}';
+
+    _.each(data.suites, function(suite, suiteName) {
+        if (suite.failingTests.length > 0) {
+            _.each(suite.failingTests, truncateErrorStack);
+        }
+    });
+    if (data.failingTests.length > 0) {
+        _.each(data.failingTests, truncateErrorStack);
+    }
+
     var eq = deepEqual(expected, data);
     if (!eq) {
         console.log(diff.compare(expected, data));

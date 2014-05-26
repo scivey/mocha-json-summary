@@ -67,12 +67,6 @@ describe('SuiteTracker', function() {
             });
         });
 
-
-        // SuiteTracker.prototype._currentSuiteSummary = function() {
-        //     this._ensureSuiteHash();
-        //     return this._suiteHash[this._stack.currentSuiteName()];
-        // };
-
         describe('#_currentSuiteSummary', function() {
             it('works', function() {
                 tracker._suiteHash.foo = 'bar';
@@ -185,9 +179,14 @@ describe('SuiteTracker', function() {
 
         describe('#summarize', function() {
             it('works', function() {
-                var suites = {};
+                var suites = {suites: true};
+                var failing = [{failing: true}];
                 tracker._suiteHash = suites;
-                assert.equal(tracker.summarize(), suites);                
+                tracker._failingTests = failing;
+                assert.deepEqual({
+                    suites: suites,
+                    failingTests: failing
+                }, tracker.summarize());                
             });
         });
     });
@@ -227,41 +226,52 @@ describe('SuiteTracker', function() {
             }, 'ErrorInstance');
 
             assert.deepEqual({
-                foo: {
-                    tests: [
-                        {
-                            title: 'yet_another'
-                        }
-                    ],
-                    failingTests: []
-                },
-                foo__bar: {
-                    tests: [
-                        {
-                            title: 'some_test'
-                        },
-                        {
-                            title: 'another_test'
-                        }
-                    ],
-                    failingTests: []
-                },
-                foo__baz: {
-                    tests: [
-                        {
-                            title: 'they_keep_coming'
-                        },
-                    ],
-                    failingTests: [
-                        {
-                            test: {
-                                title: 'some_failing_test'
+                suites: {
+                    foo: {
+                        tests: [
+                            {
+                                title: 'yet_another'
+                            }
+                        ],
+                        failingTests: []
+                    },
+                    foo__bar: {
+                        tests: [
+                            {
+                                title: 'some_test'
                             },
-                            err: 'ErrorInstance',
-                            suite: 'foo__baz'
-                        }
-                    ]
-                }
+                            {
+                                title: 'another_test'
+                            }
+                        ],
+                        failingTests: []
+                    },
+                    foo__baz: {
+                        tests: [
+                            {
+                                title: 'they_keep_coming'
+                            },
+                        ],
+                        failingTests: [
+                            {
+                                test: {
+                                    title: 'some_failing_test'
+                                },
+                                err: 'ErrorInstance',
+                                suite: 'foo__baz'
+                            }
+                        ]
+                    },
+                },
+                failingTests: [
+                    {
+                        test: {
+                            title: 'some_failing_test'
+                        },
+                        err: 'ErrorInstance',
+                        suite: 'foo__baz'
+                    }
+                ]
             }, tracker.summarize());
             sinon.assert.calledThrice(stack.push);
             sinon.assert.called(stack.currentSuiteName);
