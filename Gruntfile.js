@@ -52,7 +52,7 @@ module.exports = function(grunt) {
             integration: {
                 src: ['./test-integration/*.js']
             }
-        },
+        }
     });
 
     // Default task.

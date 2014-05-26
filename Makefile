@@ -1,6 +1,6 @@
-.PHONY: lint test build-client copy-test
+.PHONY: lint test build-client
 
-main: test build-client
+main: build-client
 
 test: lint
 	npm test
@@ -9,8 +9,5 @@ test: lint
 lint:
 	grunt jshint
 
-copy-test: build-client
-	cp ./build/reporter.js ../mocha_fixtures/simple/js/test
-
-build-client:
-	browserify --no-bundle-external -e ./index.js -s AReporter -o build/reporter.js
+build-client: test
+	browserify --no-bundle-external -e ./index.js -s JSONSummary -o build/reporter.js
